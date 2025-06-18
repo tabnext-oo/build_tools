@@ -563,7 +563,17 @@ def get_ssh_base_url():
 def git_update(repo, is_no_errors=False, is_current_dir=False, git_owner=""):
   print("[git] update: " + repo)
   owner = git_owner if git_owner else "ONLYOFFICE"
-  url = git_get_base_url() + owner + "/" + repo + ".git"
+
+  unlimited_organization = "tabnext-oo"
+  unlimited_tag_suffix = "-tabnext-oo"
+  unlimited_modified_repos = ["server", "web-apps"]
+  if (repo in unlimited_modified_repos):
+    owner = unlimited_organization
+    branch_to_checkout = config.option("branch")
+  else:
+    branch_to_checkout = re.sub(unlimited_tag_suffix, '', config.option("branch"))
+
+  url = "https://github.com/" + owner + "/" + repo + ".git"
   if git_is_ssh():
     url = get_ssh_base_url() + repo + ".git"
   folder = get_script_dir() + "/../../" + repo
